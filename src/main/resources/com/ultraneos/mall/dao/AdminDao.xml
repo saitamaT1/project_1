@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 约束文件 -->
+
+<!-- namespace : 命名空间，每一个mapper.xml文件都有自己的独一无二的命名空间 -->
+<mapper namespace="com.ultraneos.mall.dao.AdminDao">
+    <!--insert-->
+    <!--update-->
+    <!--delete-->
+    <!--select-->
+
+    <!-- id：这个标签的唯一标识，在这个文件中要独一无二 ，id不能重复-->
+    <!-- resultType: 结果集类型 ，表示查询出来的结果集 要映射到哪个JavaBean中,要写全限定名称 -->
+    <!-- 那么后续如何找到这个SQL语句呢？ namespace.id : SQL语句的坐标,全局唯一  -->
+
+
+    <select id="queryCount" parameterType="com.ultraneos.mall.model.po.Admin" resultType="int">
+        select count(id) from admin where username = #{username} and password = #{password}
+    </select>
+
+    <select id="queryAll" resultType="com.ultraneos.mall.model.vo.AdminInfoVO">
+        select id,username as email ,password as pwd,nickname from admin
+    </select>
+
+    <insert id="addAdmin">
+        insert into admin values (null ,#{username},#{password},#{nickname})
+    </insert>
+
+    <select id="queryCountUsername" resultType="int">
+        select count(id) from admin where username = #{username}
+    </select>
+
+    <select id="queryByUsernameAndNickname" resultType="com.ultraneos.mall.model.vo.AdminInfoVO">
+        select id,username as email ,password as pwd,nickname from admin
+        <where>
+            <if test="bo.email != null">
+                and username like concat('%',#{bo.email},'%')
+            </if>
+            <if test="bo.nickname != null">
+                and nickname like concat('%',#{bo.nickname},'%')
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteAdminById">
+        delete from admin where id = #{id}
+    </delete>
+
+    <select id="getAdminById" resultType="com.ultraneos.mall.model.vo.AdminInfoVO">
+        select id,username as email ,password as pwd,nickname from admin where id = #{id}
+    </select>
+
+    <update id="updateAdmin">
+        update admin set username = #{vo.email},nickname = #{vo.nickname},password = #{vo.pwd} where id = #{vo.id}
+    </update>
+
+    <update id="updatePwdOfAdmin">
+        update admin set password = #{bo.confirmPwd} where username = #{bo.adminToken}
+    </update>
+
+    <select id="queryPwdOfAdmin" resultType="java.lang.String">
+        select password from admin where username = #{bo.adminToken}
+    </select>
+</mapper>

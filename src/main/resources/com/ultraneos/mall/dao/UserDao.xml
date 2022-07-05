@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 约束文件 -->
+
+<!-- namespace : 命名空间，每一个mapper.xml文件都有自己的独一无二的命名空间 -->
+<mapper namespace="com.ultraneos.mall.dao.UserDao">
+    <!--insert-->
+    <!--update-->
+    <!--delete-->
+    <!--select-->
+
+    <!-- id：这个标签的唯一标识，在这个文件中要独一无二 ，id不能重复-->
+    <!-- resultType: 结果集类型 ，表示查询出来的结果集 要映射到哪个JavaBean中,要写全限定名称 -->
+    <!-- 那么后续如何找到这个SQL语句呢？ namespace.id : SQL语句的坐标,全局唯一  -->
+
+
+    <select id="getAllUsers" resultType="com.ultraneos.mall.model.vo.UserVO">
+        select id , password as pwd, name as email,
+        recName as recipient , phoneNum as phone ,address,nickname
+        from users
+    </select>
+
+    <select id="getUsersByNickname" resultType="com.ultraneos.mall.model.vo.UserVO">
+        select id , password as pwd, name as email,
+        recName as recipient , phoneNum as phone ,address,nickname
+        from users
+        <where>
+            <if test="n != null">
+                and nickname like concat('%',#{n},'%')
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteUserById">
+        delete from users where id = #{id}
+    </delete>
+
+    <select id="queryCount" resultType="int">
+        select count(id) from users where name = #{bo.email} and password = #{bo.pwd}
+    </select>
+
+    <insert id="addUser">
+        insert into users values (null, #{vo.email},#{vo.pwd},#{vo.nickname},#{vo.recipient},#{vo.address},#{vo.phone})
+    </insert>
+
+    <select id="getUserByName" resultType="com.ultraneos.mall.model.po.User">
+        select * from users where name = #{name}
+    </select>
+
+    <update id="updateUserPwd">
+        update users set password = #{userPwdBO.confirmPwd} where  id = #{userPwdBO.id}
+    </update>
+
+    <update id="updataUser">
+        update users set nickname = #{nickname}, phoneNum = #{phone},
+        recName = #{recipient}, address = #{address} where id = #{id}
+    </update>
+</mapper>

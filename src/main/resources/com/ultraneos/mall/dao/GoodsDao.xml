@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 约束文件 -->
+
+<!-- namespace : 命名空间，每一个mapper.xml文件都有自己的独一无二的命名空间 -->
+<mapper namespace="com.ultraneos.mall.dao.GoodsDao">
+    <!--insert-->
+    <!--update-->
+    <!--delete-->
+    <!--select-->
+
+    <!-- id：这个标签的唯一标识，在这个文件中要独一无二 ，id不能重复-->
+    <!-- resultType: 结果集类型 ，表示查询出来的结果集 要映射到哪个JavaBean中,要写全限定名称 -->
+    <!-- 那么后续如何找到这个SQL语句呢？ namespace.id : SQL语句的坐标,全局唯一  -->
+
+
+    <select id="getType" resultType="com.ultraneos.mall.model.po.Type">
+        select id,name from type
+    </select>
+
+    <select id="getGoodsByType" resultType="com.ultraneos.mall.model.vo.GetGoodsByTypeVO">
+        select id , name,image as img ,typeId ,price,stockNum from goods where typeId = #{id}
+    </select>
+
+    <insert id="addGoods" useGeneratedKeys="true" keyProperty="g.id">
+        insert into goods values (null,#{g.name},#{g.typeId},#{g.image},#{g.description},#{g.price},#{g.stockNum})
+    </insert>
+
+    <insert id="addSpecList">
+        insert into spec values
+        <foreach collection="specs" separator="," open="" close="" item="spec">
+            (null,#{spec.name},#{spec.price},#{spec.stockNum},#{id})
+        </foreach>
+    </insert>
+
+
+
+    <insert id="addType">
+        insert into type values (null,#{type.name})
+    </insert>
+
+    <delete id="deleteTypeById">
+        delete from type where id = #{id}
+    </delete>
+
+    <select id="getGoodsVOById" resultType="com.ultraneos.mall.model.vo.GoodsVO">
+        select id , price as unitPrice,image as img ,name,typeId,description as `desc` from goods where id = #{id}
+    </select>
+
+    <select id="getSpecVOByGoodsId" resultType="com.ultraneos.mall.model.vo.SpecVO">
+        select id , stockNum,name as specName,price as unitPrice from spec where goodsId = #{id}
+    </select>
+
+    <insert id="addSpecByGoodsId">
+        insert into spec values (null,#{bo.specName},#{bo.unitPrice},#{bo.stockNum},#{bo.goodsId})
+    </insert>
+
+    <delete id="deleteSpec">
+        delete from spec where goodsId = #{bo.goodsId} and name = #{bo.specName}
+    </delete>
+
+    <update id="updateGoods">
+        update goods set
+        name = #{g.name},typeId = #{g.typeId},image = #{g.image},
+        description= #{g.description},stockNum = #{g.stockNum},name = #{g.name}
+        where id = #{g.id}
+    </update>
+
+    <delete id="deleteGoodsById">
+        delete from goods where id = #{id}
+    </delete>
+
+    <delete id="deleteSpecById">
+        delete from spec where goodsId = #{id}
+    </delete>
+
+    <select id="getspecNamesByGoodsId" resultType="java.lang.String">
+        select name from spec where goodsId = #{id}
+    </select>
+
+    <select id="getGoodsByName" resultType="com.ultraneos.mall.model.vo.GetGoodsByTypeVO">
+        select id , name,image as img ,typeId ,price from goods where name like concat ('%',#{key},'%')
+    </select>
+
+    <select id="getAllGoods" resultType="com.ultraneos.mall.model.vo.GetGoodsByTypeVO">
+        select id , name,image as img ,typeId ,price,stockNum from goods
+    </select>
+
+    <select id="getNoReplyMsg" resultType="com.ultraneos.mall.model.po.Msg">
+        select * from msg where state = #{no}
+    </select>
+
+    <update id="updateMsg">
+      update msg set replyContent = #{BO.content} ,state = 0 ,rCreateTime = #{date} where id = #{BO.id}
+    </update>
+
+    <select id="getMsgByGoodsId" resultType="com.ultraneos.mall.model.po.Msg">
+        select * from msg where goodsId = #{id}
+    </select>
+
+    <insert id="addMsg">
+        insert into msg values (null,#{content},null ,#{goods},#{username},#{createTime},#{state},#{userId},#{goodsId},null)
+    </insert>
+
+    <select id="getCommentsByGoodsId" resultType="com.ultraneos.mall.model.po.Comments">
+        select * from comments where goodsId = #{goodsId}
+    </select>
+
+    <insert id="addSpecByGoodsIdAndSpec">
+        insert into spec values
+        <foreach collection="BOS" separator="," open="" close="" item="spec">
+            (null,#{spec.specName},#{spec.unitPrice},#{spec.stockNum},#{id})
+        </foreach>
+    </insert>
+</mapper>

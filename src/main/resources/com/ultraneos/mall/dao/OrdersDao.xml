@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 约束文件 -->
+
+<!-- namespace : 命名空间，每一个mapper.xml文件都有自己的独一无二的命名空间 -->
+<mapper namespace="com.ultraneos.mall.dao.OrdersDao">
+    <!--insert-->
+    <!--update-->
+    <!--delete-->
+    <!--select-->
+
+    <!-- id：这个标签的唯一标识，在这个文件中要独一无二 ，id不能重复-->
+    <!-- resultType: 结果集类型 ，表示查询出来的结果集 要映射到哪个JavaBean中,要写全限定名称 -->
+    <!-- 那么后续如何找到这个SQL语句呢？ namespace.id : SQL语句的坐标,全局唯一  -->
+
+
+    <select id="getOrders" resultType="com.ultraneos.mall.model.po.Orders">
+        select * from orders
+        <where>
+            <if test="bo.goods != null and bo.goods!=''">
+                and goods like concat('%',#{bo.goods},'%')
+            </if>
+            <if test="bo.id != null and bo.id != ''">
+                and id like concat('%',#{bo.id},'%')
+            </if>
+            <if test="bo.moneyLimit1 != null and bo.moneyLimit1 != ''">
+                and amount &lt;= #{bo.moneyLimit1}
+            </if>
+            <if test="bo.moneyLimit2 != null and bo.moneyLimit2 != ''">
+                and amount 	&gt;= #{bo.moneyLimit2}
+            </if>
+            <if test="bo.name != null and bo.name!=''">
+                and nickname like concat('%',#{bo.name},'%')
+            </if>
+            <if test="bo.state != null and bo.state!=-1">
+                and stateId = #{bo.state}
+            </if>
+            <if test="bo.address != null and bo.address!=''">
+                and address like concat('%',#{bo.address},'%')
+            </if>
+        </where>
+        order by id desc
+        limit ${bo.pagesize*(bo.currentPage-1)} , ${bo.pagesize}
+    </select>
+
+    <delete id="deleteOrdersById">
+        delete from orders where id = #{id}
+    </delete>
+
+    <select id="getTotalCount" resultType="int">
+        select count(id) from orders
+        <where>
+            <if test="bo.goods != null and bo.goods!=''">
+                and goods like concat('%',#{bo.goods},'%')
+            </if>
+            <if test="bo.id != null and bo.id != ''">
+                and id like concat('%',#{bo.id},'%')
+            </if>
+            <if test="bo.moneyLimit1 != null and bo.moneyLimit1 != ''">
+                and amount &lt;= #{bo.moneyLimit1}
+            </if>
+            <if test="bo.moneyLimit2 != null and bo.moneyLimit2 != ''">
+                and amount 	&gt;= #{bo.moneyLimit2}
+            </if>
+            <if test="bo.name != null and bo.name!=''">
+                and nickname like concat('%',#{bo.name},'%')
+            </if>
+            <if test="bo.state != null and bo.state!=-1">
+                and stateId = #{bo.state}
+            </if>
+            <if test="bo.address != null and bo.address!=''">
+                and address like concat('%',#{bo.address},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getOrdersById" resultType="com.ultraneos.mall.model.po.Orders">
+        select * from orders where id = #{id}
+    </select>
+
+    <select id="getSpecByGoodsId" resultType="com.ultraneos.mall.model.vo.SpecVO">
+        select id ,name as SpecName ,price as unitPrice from spec where goodsId = #{gId}
+    </select>
+
+    <select id="getAllStates" resultType="com.ultraneos.mall.model.po.States">
+        select * from states
+    </select>
+
+    <select id="getSpecById" resultType="com.ultraneos.mall.model.po.Spec">
+        select price , name , goodsId,stockNum from spec where id = #{id}
+    </select>
+
+    <update id="updateOrder">
+        update orders set spec = #{o.spec} ,specId = #{o.specId},amount = #{o.amount},
+        stateId = #{o.stateId},state = #{o.state},number = #{o.number},hasComment = #{o.hasComment}
+        where id = #{o.id}
+    </update>
+
+    <select id="getStatesById" resultType="com.ultraneos.mall.model.po.States">
+        select * from states where id = #{id}
+    </select>
+
+    <select id="getUser" resultType="com.ultraneos.mall.model.po.User">
+        select * from users where name = #{token}
+    </select>
+
+    <insert id="AddOrders">
+        insert into orders values (null,#{userId},#{nickname},#{receiver},#{address},
+        #{phone},#{goods},#{goodsId},#{spec},#{specId},#{number},#{amount},#{stateId},#{createTime},#{score},#{state},#{hasComment})
+    </insert>
+
+    <select id="getOrdersByUsernameAndState" resultType="com.ultraneos.mall.model.po.Orders">
+        select * from orders where nickname = #{token}
+        <if test="state != -1">and stateId = #{state}</if>
+    </select>
+
+    <update id="updateOrderByCart">
+        update orders set amount = #{cartBO.amount} , number = #{cartBO.goodsNum}, stateId = 1 where  id = #{cartBO.id}
+    </update>
+
+    <update id="updateSpecByCart">
+        update spec set stockNum = #{spec.stockNum} where name  = #{spec.name}
+    </update>
+
+    <insert id="addComments">
+        insert into comments values (null ,#{comment},#{score},#{goodsId},#{specName},#{time},#{nickname},#{userId},#{orderId})
+    </insert>
+</mapper>

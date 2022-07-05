@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!-- 这个 约束文件，规定了标签出现的名字和顺序-->
+
+<configuration>
+
+    <!--<properties>-->
+    <!--<property name="user" value="root"/>-->
+    <!--<property name="passswd" value="root"/>-->
+    <!--</properties>-->
+    <properties resource="jdbc.properties"/>
+
+    <settings>
+        <!--<setting name="cacheEnabled" value="false"/>-->
+        <!-- 日志的配置-->
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+
+    </settings>
+
+    <!-- 类型别名 -->
+    <!--<typeAliases>-->
+    <!--<typeAlias type="com.ultraneos.mybatis_01.bean.User" alias="User"/>-->
+    <!--</typeAliases>-->
+
+    <!-- 环境配置 -->
+    <!-- default：默认值，默认值是下面每一个environment标签的 id值 -->
+    <environments default="development">
+
+        <!-- 可以配置多个环境  id：环境的名字 -->
+        <environment id="development">
+            <!-- 事务管理器： JDBC | MANAGED
+            JDBC: 这个是使用传统的JDBC来控制事务，其实也就是我们之前说的连接对象
+            MANAGED: 这个配置几乎没做什么，是把事务交给外部的容器（Spring）来控制
+            -->
+            <transactionManager type="JDBC"/>
+
+            <!-- 数据库连接池的配置
+            POOLED；表示使用Mybatis内置的数据库连接池
+            UNPOOLED：表示不使用数据库连接池，每次会新打开一个连接，使用完了就关闭连接
+            JNDI：配置外部数据源，例如DBCP | C3p0 | Druid
+            -->
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+
+    </environments>
+
+
+    <!-- 引入SQL语句的配置文件 -->
+    <mappers>
+
+        <package name="com.ultraneos.mall.dao"/>
+
+
+    </mappers>
+
+</configuration>
